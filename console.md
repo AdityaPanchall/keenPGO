@@ -72,16 +72,40 @@ Why this matters:
 You (browser) ──HTTPS──► KeenPG console ──► Kubernetes ──► KeenPG operator ──► your PostgreSQL clusters
 ```
 
-1. **You** fill a form or press a button in the console.  
-2. **The console** checks that you are allowed to do this. It then saves your request in Kubernetes as a `KeenPGCluster` object and writes an entry in the audit log.  
-3. **The KeenPG operator**, a program running inside your Kubernetes, sees the request. It creates everything the database needs: pods, disks, network services, passwords, certificates and backup jobs.  
+1. **You** fill a form or press a button in the console.
+2. **The console** checks that you are allowed to do this. It then saves your request in Kubernetes as a `KeenPGCluster` object and writes an entry in the audit log.
+3. **The KeenPG operator**, a program running inside your Kubernetes, sees the request. It creates everything the database needs: pods, disks, network services, passwords, certificates and backup jobs.
 4. **The operator keeps watching.** If a pod crashes, a disk is lost or someone deletes a service by mistake, the operator puts it back.
+
+```mermaid
+sequenceDiagram
+    actor U as You
+    participant C as Console
+    participant K as Kubernetes
+    participant O as KeenPG operator
+    participant P as Your PostgreSQL cluster
+
+    U->>C: Fill a form or press a button
+    C->>C: Check you are allowed
+    C->>K: Save KeenPGCluster object
+    C->>C: Write audit log entry
+    K->>O: Operator sees the request
+    O->>P: Create pods, disks, services, passwords, certificates, backup jobs
+    loop Keeps watching
+        O->>P: Put back anything that crashed or was deleted
+    end
+```
 
 Why this matters:
 
-- **The console and the command line always agree.** For clusters, backups and settings, the console only writes the same objects you could write with `kubectl`. Only the **SQL Editor** and **Databases** pages talk to PostgreSQL directly, like any SQL tool.  
-- **Your databases don't depend on the console.** If the console stops, your databases keep running.  
-- **Your databases don't depend on the operator either.** If the operator stops, they keep running and failover still works. Only new changes wait until it is back.
+> [!TIP]
+> **The console and the command line always agree.** For clusters, backups and settings, the console only writes the same objects you could write with `kubectl`. Only the **SQL Editor** and **Databases** pages talk to PostgreSQL directly, like any SQL tool.
+
+> [!NOTE]
+> **Your databases don't depend on the console.** If the console stops, your databases keep running.
+
+> [!NOTE]
+> **Your databases don't depend on the operator either.** If the operator stops, they keep running and failover still works. Only new changes wait until it is back.
 
 ---
 
