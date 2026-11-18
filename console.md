@@ -249,8 +249,21 @@ kubectl -n keenpg-operator rollout restart deploy/keenpgo-console
 
 The console always uses **HTTPS**. It makes its own **self-signed certificate** the first time it starts, and keeps it in the Secret `keenpgo-console-tls`.
 
-- Nothing else is needed: no cert-manager and no extra job. It works the same with Helm, kubectl, Argo CD and OpenShift.  
-- Every console pod and every restart uses the same certificate. It is valid for 2 years; the console makes a new one 30 days before it ends.  
+```mermaid
+flowchart LR
+    A["Console starts for the first time"] --> B["Makes its own self-signed certificate"]
+    B --> C["Keeps it in the Secret keenpgo-console-tls"]
+    C --> D["Every console pod and every restart uses it"]
+    D -.-> E["Valid for 2 years: a new one is made 30 days before it ends"]
+
+    classDef step fill:#e3f2fd,stroke:#1976d2,color:#0d3c6e
+    classDef note fill:#fff8e1,stroke:#f9a825,color:#5d4037
+    class A,B,C,D step
+    class E note
+```
+
+- Nothing else is needed: no cert-manager and no extra job. It works the same with Helm, kubectl, Argo CD and OpenShift.
+- Every console pod and every restart uses the same certificate. It is valid for 2 years; the console makes a new one 30 days before it ends.
 - `http://` on the same port is sent on to `https://` by itself.
 
 **Stop the browser warning.** Save the certificate and trust it on your computer (it is its own authority):
@@ -259,11 +272,18 @@ The console always uses **HTTPS**. It makes its own **self-signed certificate** 
 kubectl -n keenpg-operator get secret keenpgo-console-tls -o jsonpath='{.data.tls\.crt}' | base64 -d > keenpg-console.crt
 ```
 
-- **Windows:** double-click the file → **Install Certificate** → *Local Machine* → *Trusted Root Certification Authorities*.  
-- **macOS:** open it in **Keychain Access** → *System* → set *Always Trust*.  
-- **Linux (Chrome / Firefox):** browser settings → *Certificates* → *Authorities* → **Import**.
+| System | Steps |
+| :---- | :---- |
+| 🪟 **Windows** | double-click the file → **Install Certificate** → *Local Machine* → *Trusted Root Certification Authorities*. |
+| 🍎 **macOS** | open it in **Keychain Access** → *System* → set *Always Trust*. |
+| 🐧 **Linux (Chrome / Firefox)** | browser settings → *Certificates* → *Authorities* → **Import**. |
 
-**Your address in the certificate.** By default the certificate is for the console's service names and `localhost`. To add the IP or name people type in the browser, set `KEENPGO_TLS_HOSTS` and let the console make a new certificate:
+<details>
+<summary><strong>Your address in the certificate.</strong></summary>
+
+<br>
+
+By default the certificate is for the console's service names and `localhost`. To add the IP or name people type in the browser, set `KEENPGO_TLS_HOSTS` and let the console make a new certificate:
 
 ```sh
 kubectl -n keenpg-operator set env deploy/keenpgo-console KEENPGO_TLS_HOSTS=192.168.49.2,console.example.com
@@ -271,7 +291,14 @@ kubectl -n keenpg-operator delete secret keenpgo-console-tls
 kubectl -n keenpg-operator rollout restart deploy/keenpgo-console
 ```
 
-**Your own certificate** (from your company's authority or cert-manager): put it in the same Secret. The console uses it as it is, never replaces it, and picks up a renewed one within 5 minutes:
+</details>
+
+<details>
+<summary><strong>Your own certificate</strong> (from your company's authority or cert-manager)</summary>
+
+<br>
+
+Put it in the same Secret. The console uses it as it is, never replaces it, and picks up a renewed one within 5 minutes:
 
 ```sh
 kubectl -n keenpg-operator create secret tls keenpgo-console-tls --cert=console.crt --key=console.key \
@@ -279,14 +306,30 @@ kubectl -n keenpg-operator create secret tls keenpgo-console-tls --cert=console.
 kubectl -n keenpg-operator rollout restart deploy/keenpgo-console
 ```
 
-**OpenShift:** create a passthrough Route, so the browser talks HTTPS straight to the console:
+</details>
+
+<details>
+<summary><strong>OpenShift</strong></summary>
+
+<br>
+
+Create a passthrough Route, so the browser talks HTTPS straight to the console:
 
 ```sh
 oc -n keenpg-operator create route passthrough keenpgo-console --service=keenpgo-console --port=https
 oc -n keenpg-operator get route keenpgo-console
 ```
 
-**An Ingress or load balancer that already does HTTPS:** it can send plain HTTP to the console with the header `X-Forwarded-Proto: https`; the console accepts that. Or turn the console's own HTTPS off with `KEENPGO_TLS=off`.
+</details>
+
+<details>
+<summary><strong>An Ingress or load balancer that already does HTTPS</strong></summary>
+
+<br>
+
+It can send plain HTTP to the console with the header `X-Forwarded-Proto: https`; the console accepts that. Or turn the console's own HTTPS off with `KEENPGO_TLS=off`.
+
+</details>
 
 ---
 
@@ -296,19 +339,23 @@ Every page has the same frame:
 
 | Area | What it does |
 | :---- | :---- |
-| **Left menu** | Opens each page. On small screens it shows only icons; click **»** at the bottom to open it. Pages with an arrow (**Observability**) open a list of sub-pages. |
-| **Project** (top left) | Chooses the project you are working in. **All projects** (the default) shows the clusters of every project you can see. |
-| **Create cluster** (top right) | Starts a new database from any page. |
-| **Your name** (top right) | Change your password, manage users (admins only), sign out. |
+| 🧭 **Left menu** | Opens each page. On small screens it shows only icons; click **»** at the bottom to open it. Pages with an arrow (**Observability**) open a list of sub-pages. |
+| 📁 **Project** (top left) | Chooses the project you are working in. **All projects** (the default) shows the clusters of every project you can see. |
+| ➕ **Create cluster** (top right) | Starts a new database from any page. |
+| 👤 **Your name** (top right) | Change your password, manage users (admins only), sign out. |
 
-![Project list with All projects](assets/console-all-projects.png)
+<p align="center">
+  <img src="Images_keen/console-all-projects.png" alt="Project list with All projects" width="600">
+  <br>
+  <em>Project list with All projects</em>
+</p>
 
 Like **All namespaces** in OpenShift, **All projects** is first in the list. Pick a project to see only its clusters. The lists of clusters, the SQL editor and Backup & Restore follow the project you pick.
 
-You see only the pages and buttons your role allows. See [Users and access](#users-and-access).
+> [!NOTE]
+> You see only the pages and buttons your role allows. See [Users and access](#users-and-access).
 
 ---
-
 ## Home
 
 The Home page is your daily check: in one look you see whether everything is fine.
