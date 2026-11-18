@@ -79,22 +79,44 @@ Why this matters:
 
 | Word | Meaning |
 | :---- | :---- |
-| **Project** | A group of databases. In Kubernetes this is a *namespace*, for example `apps` or `analytics`. **All projects** shows every project at once. |
-| **Cluster** | One PostgreSQL database service: one primary and its replicas. |
-| **Primary** (also *leader*) | The main server. All writes go here. |
-| **Replica** (also *standby*) | A live copy of the primary. It can serve reads and takes over if the primary fails. |
-| **Sync standby** | A replica that confirms every write before the primary says "done", so no data is lost if the primary fails. |
-| **Failover** | A replica becomes the primary **automatically** because the primary stopped. |
-| **Switchover** | You move the primary role to a replica **on purpose**, for example before maintenance. |
-| **Lag** | How far a replica is behind the primary. `0 B` means fully up to date. |
-| **Patroni** | The tool inside each pod that chooses the primary and handles failover. |
-| **pgBackRest** | The backup tool. |
-| **Repository (repo)** | Where backups are kept: a disk inside Kubernetes, or object storage (S3, GCS, Azure). |
-| **Point-in-time restore** | Restoring a database to an exact moment, for example "yesterday at 10:15". |
-| **PgBouncer** | A connection pooler. Many application connections share a few database connections. |
-| **Secret** | A safe place in Kubernetes for passwords, keys and certificates. |
-| **Collector** | A small helper container added to each database pod when **Monitoring** is on. It collects metrics and, with **Logging**, the logs. |
-| **Prometheus / Loki / Grafana** | Prometheus stores the metrics, Loki stores the logs, Grafana shows both as dashboards. |
+| 🗂️ **Project** | A group of databases. In Kubernetes this is a *namespace*, for example `apps` or `analytics`. **All projects** shows every project at once. |
+| 🐘 **Cluster** | One PostgreSQL database service: one primary and its replicas. |
+| 👑 **Primary** (also *leader*) | The main server. All writes go here. |
+| 📄 **Replica** (also *standby*) | A live copy of the primary. It can serve reads and takes over if the primary fails. |
+| 🤝 **Sync standby** | A replica that confirms every write before the primary says "done", so no data is lost if the primary fails. |
+| 🚨 **Failover** | A replica becomes the primary **automatically** because the primary stopped. |
+| 🔁 **Switchover** | You move the primary role to a replica **on purpose**, for example before maintenance. |
+| ⏱️ **Lag** | How far a replica is behind the primary. `0 B` means fully up to date. |
+| 🧭 **Patroni** | The tool inside each pod that chooses the primary and handles failover. |
+| 💾 **pgBackRest** | The backup tool. |
+| 📦 **Repository (repo)** | Where backups are kept: a disk inside Kubernetes, or object storage (S3, GCS, Azure). |
+| ⏪ **Point-in-time restore** | Restoring a database to an exact moment, for example "yesterday at 10:15". |
+| 🔀 **PgBouncer** | A connection pooler. Many application connections share a few database connections. |
+| 🔐 **Secret** | A safe place in Kubernetes for passwords, keys and certificates. |
+| 📡 **Collector** | A small helper container added to each database pod when **Monitoring** is on. It collects metrics and, with **Logging**, the logs. |
+| 📊 **Prometheus / Loki / Grafana** | Prometheus stores the metrics, Loki stores the logs, Grafana shows both as dashboards. |
+
+```mermaid
+flowchart LR
+    App["Application"] --> PB["PgBouncer"]
+    PB --> P["Primary (leader)"]
+    P -->|live copy| S["Sync standby"]
+    P -->|live copy| R["Replica (standby)"]
+    PAT["Patroni"] -. "chooses the primary" .-> P
+
+    classDef main fill:#e8f5e9,stroke:#2e7d32,color:#1b5e20
+    classDef copy fill:#e3f2fd,stroke:#1976d2,color:#0d3c6e
+    class P main
+    class S,R copy
+```
+
+```mermaid
+flowchart LR
+    Col["Collector"] -->|metrics| Prom["Prometheus"]
+    Col -->|logs| Loki["Loki"]
+    Prom --> G["Grafana dashboards"]
+    Loki --> G
+```
 
 ---
 
