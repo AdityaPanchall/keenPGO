@@ -345,7 +345,7 @@ Every page has the same frame:
 | 👤 **Your name** (top right) | Change your password, manage users (admins only), sign out. |
 
 <p align="center">
-  <img src="Images_keen/console-all-projects.png" alt="Project list with All projects" width="600">
+  <img src="Images_keen/console-all-projects.png" alt="Project list with All projects" width="100%">
   <br>
   <em>Project list with All projects</em>
 </p>
