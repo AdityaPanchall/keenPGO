@@ -356,35 +356,40 @@ Like **All namespaces** in OpenShift, **All projects** is first in the list. Pic
 > You see only the pages and buttons your role allows. See [Users and access](#users-and-access).
 
 ---
+
 ## Home
 
 The Home page is your daily check: in one look you see whether everything is fine.
 
-![Home page](assets/console-home.png)
+<p align="center">
+  <img src="Images_keen/console-home.png" alt="Home page" width="100%">
+  <br>
+  <em>Home page</em>
+</p>
 
 **Top card**
 
-- **Operator ready 1/1** means the KeenPG operator is running.  
-- The chips show the **PostgreSQL versions** you can use.  
+- **Operator ready 1/1** means the KeenPG operator is running.
+- The chips show the **PostgreSQL versions** you can use.
 - The four shortcuts open **Create cluster**, **SQL editor**, **Databases** and **Migration**.
 
 **Count cards**
 
 | Card | Meaning |
 | :---- | :---- |
-| **Clusters** ring | All clusters, split by state. |
-| **Healthy** | Clusters with every pod ready. |
-| **Need attention** | Clusters with a problem. Open them first. |
-| **Being created** | New clusters that are still starting. |
-| **Kubernetes health** | Problems in Kubernetes itself, for example a node that is not ready. |
+| 🔵 **Clusters** ring | All clusters, split by state. |
+| 🟢 **Healthy** | Clusters with every pod ready. |
+| 🟠 **Need attention** | Clusters with a problem. Open them first. |
+| 🟡 **Being created** | New clusters that are still starting. |
+| ☸️ **Kubernetes health** | Problems in Kubernetes itself, for example a node that is not ready. |
 
 **Your clusters**
 
 One card per cluster. Each card shows:
 
-- the PostgreSQL version;  
-- how many pods are ready (for example `3/3 ready`);  
-- the current primary;  
+- the PostgreSQL version;
+- how many pods are ready (for example `3/3 ready`);
+- the current primary;
 - labels such as **production**, **PgBouncer** or **Backups**.
 
 Click a card to open the cluster.
@@ -397,30 +402,52 @@ Lower on the page, **Recent activity** lists what happened lately (for example "
 
 Click **Create cluster** (top right). The form has 9 numbered steps. While you fill it, the **Summary** on the right shows what you will get.
 
-![Create cluster: project, name and version](assets/console-create-cluster.png)
+```mermaid
+flowchart LR
+    S1["1. Project and name"] --> S2["2. PostgreSQL"] --> S3["3. Instances and resources"] --> S4["4. Backups"]
+    S4 -.-> S5["5. Connection pooling"] -.-> S6["6. Network, security, monitoring"] -.-> S7["7. Users and databases"] -.-> S8["8. PostgreSQL parameters"] -.-> S9["9. Initial data"]
+    S9 --> F["Check Summary → Create cluster"]
 
-**Step 1: Project and name**
+    classDef must fill:#e3f2fd,stroke:#1976d2,color:#0d3c6e
+    classDef opt fill:#f3e5f5,stroke:#7b1fa2,color:#4a148c
+    classDef fin fill:#e8f5e9,stroke:#2e7d32,color:#1b5e20
+    class S1,S2,S3,S4 must
+    class S5,S6,S7,S8,S9 opt
+    class F fin
+```
 
-- **Project:** where the cluster will live. Click **New…** to make a new project.  
-- **Cluster name:** lowercase letters, digits and `-`, for example `orders-db`. You can't change it later.  
-- **Environment:** development, staging or production. This is a label that helps you sort and find clusters.  
+<p align="center">
+  <img src="Images_keen/console-create-cluster.png" alt="Create cluster: project, name and version" width="100%">
+  <br>
+  <em>Create cluster: project, name and version</em>
+</p>
+
+### Step 1: Project and name
+
+- **Project:** where the cluster will live. Click **New…** to make a new project.
+- **Cluster name:** lowercase letters, digits and `-`, for example `orders-db`. You can't change it later.
+- **Environment:** development, staging or production. This is a label that helps you sort and find clusters.
 - **Description:** optional, for example "orders and payments".
 
-**Step 2: PostgreSQL**
+### Step 2: PostgreSQL
 
-- Pick the **version** (15, 16, 17 or 18). Use the newest unless your application needs an older one.  
-- **PostGIS:** pick a version only if you store maps or locations.  
+- Pick the **version** (15, 16, 17 or 18). Use the newest unless your application needs an older one.
+- **PostGIS:** pick a version only if you store maps or locations.
 - **Custom image:** leave it empty. KeenPG then uses its own tested image.
 
-![Create cluster: pods, size and backups](assets/console-create-cluster-size.png)
+<p align="center">
+  <img src="Images_keen/console-create-cluster-size.png" alt="Create cluster: pods, size and backups" width="100%">
+  <br>
+  <em>Create cluster: pods, size and backups</em>
+</p>
 
-**Step 3: Instances and resources**
+### Step 3: Instances and resources
 
-- **Encrypted storage** turns on by itself when your Kubernetes has encrypting disks.  
-- **Pods:** how many PostgreSQL servers you get.  
-  - `1` \= a single server, with **no automatic failover**. Fine for testing.  
-  - `2` or more \= one primary plus replicas, with **automatic failover**. **Use this for production.**  
-- **Size:** click a preset (table below), or type your own values.  
+- **Encrypted storage** turns on by itself when your Kubernetes has encrypting disks.
+- **Pods:** how many PostgreSQL servers you get.
+  - `1` = a single server, with **no automatic failover**. Fine for testing.
+  - `2` or more = one primary plus replicas, with **automatic failover**. **Use this for production.**
+- **Size:** click a preset (table below), or type your own values.
 - **Require a different node for each pod** puts each copy on a different machine, so one broken machine can't take down every copy.
 
 | Preset | CPU | Memory | Disk |
@@ -429,7 +456,7 @@ Click **Create cluster** (top right). The form has 9 numbered steps. While you f
 | Medium | 1 | 2 GiB | 20 GiB |
 | Large | 4 | 8 GiB | 100 GiB |
 
-**Step 4: Backups**
+### Step 4: Backups
 
 - Keep **Enable backups** on. Without backups you can't restore or clone.
 
@@ -437,39 +464,46 @@ Click **Create cluster** (top right). The form has 9 numbered steps. While you f
 
 - **Schedules** use cron format, in UTC:
 
-  - **Full:** a complete copy;  
-  - **Differential:** changes since the last full backup;  
+  - **Full:** a complete copy;
+  - **Differential:** changes since the last full backup;
   - **Incremental:** changes since the last backup of any type.
 
   For example, `0 1 * * 0` means every Sunday at 01:00.
 
 - **Keep full backups:** how many full backups to keep. Older ones are removed automatically.
 
-**Steps 5 to 9 (optional)**
+### Steps 5 to 9 (optional)
 
 | Step | What to set |
 | :---- | :---- |
-| **5\. Connection pooling** | Turn on **pgBouncer** if your application opens many connections. |
-| **6\. Network, security, monitoring** | **ClusterIP** \= reachable only inside Kubernetes. **NodePort / LoadBalancer** \= reachable from outside. **Monitoring** and **Logging** (below). Extra image pull secrets, your own TLS certificate. |
-| **7\. Users and databases** | Each user gets a database and a generated password. Keep **Also create the postgres superuser Secret** on to use the SQL editor with full rights. |
-| **8\. PostgreSQL parameters** | Settings such as `max_connections`. Leave the defaults if you aren't sure. |
-| **9\. Initial data** | Start empty, or start from another cluster's backup, optionally at a point in time. |
+| **5. Connection pooling** | Turn on **pgBouncer** if your application opens many connections. |
+| **6. Network, security, monitoring** | **ClusterIP** = reachable only inside Kubernetes. **NodePort / LoadBalancer** = reachable from outside. **Monitoring** and **Logging** (below). Extra image pull secrets, your own TLS certificate. |
+| **7. Users and databases** | Each user gets a database and a generated password. Keep **Also create the postgres superuser Secret** on to use the SQL editor with full rights. |
+| **8. PostgreSQL parameters** | Settings such as `max_connections`. Leave the defaults if you aren't sure. |
+| **9. Initial data** | Start empty, or start from another cluster's backup, optionally at a point in time. |
 
-**Monitoring and logging (step 6\)**
+### Monitoring and logging (step 6)
 
-![Create cluster: Monitoring and Logging](assets/console-create-monitoring-logging.png)
+<p align="center">
+  <img src="Images_keen/console-create-monitoring-logging.png" alt="Create cluster: Monitoring and Logging" width="100%">
+  <br>
+  <em>Create cluster: Monitoring and Logging</em>
+</p>
 
 Both are **off** unless you tick them:
 
-- **Monitoring** adds the collector to each pod. Metrics and slow queries go to Prometheus and show on the Grafana dashboards. It works for every PostgreSQL version. It is greyed out until monitoring is installed (`kubectl apply -k config/monitoring`).  
+- **Monitoring** adds the collector to each pod. Metrics and slow queries go to Prometheus and show on the Grafana dashboards. It works for every PostgreSQL version. It is greyed out until monitoring is installed (`kubectl apply -k config/monitoring`).
 - **Logging** also sends the logs of PostgreSQL, Patroni, pgBackRest and pgBouncer to Loki. It needs **Monitoring**. It is greyed out until Loki is installed (`kubectl apply -k config/logging`).
 
 You can change both later. See [Monitoring and logging](#monitoring-and-logging).
 
-**Finish:** check the **Summary**, optionally click **View YAML** to see the exact definition, then click **Create cluster**.
+### Finish
+
+Check the **Summary**, optionally click **View YAML** to see the exact definition, then click **Create cluster**.
 
 The new cluster, and a new project, show up straight away; there is no need to reload the page. It shows **deploying** and is usually ready in 2 to 5 minutes. The first time can take longer, because the images are downloaded.
 
+> [!TIP]
 > **No passwords to prepare.** The Summary shows **Required secrets: None needed**. The operator creates every password and certificate by itself.
 
 ---
@@ -478,7 +512,11 @@ The new cluster, and a new project, show up straight away; there is no need to r
 
 Click **Clusters** in the menu to see every cluster of the project you picked, or of all projects.
 
-![Clusters list](assets/console-clusters.png)
+<p align="center">
+  <img src="Images_keen/console-clusters.png" alt="Clusters list" width="100%">
+  <br>
+  <em>Clusters list</em>
+</p>
 
 | Column | Meaning |
 | :---- | :---- |
