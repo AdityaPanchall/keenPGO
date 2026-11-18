@@ -1,43 +1,33 @@
-# KeenPG Console
-
-The **KeenPG console** is a web page for running PostgreSQL on Kubernetes and OpenShift. From your browser you can create databases, connect applications, take backups and restore them, run SQL on the primary or on a replica, and watch every database on Grafana dashboards. You never need to write YAML.
-
-This page explains every part of the console in simple words, with screenshots.
-
----
-
 ## Contents
 
 <div class="grid cards" markdown>
 
-- :material-sitemap: [How the console works](#how-the-console-works)
-- :material-book-open-variant: [Words you will see](#words-you-will-see)
-- :material-package-variant: [Install with Helm](#install-with-helm)
-- :material-login: [Sign in](#sign-in)
-- :material-lock: [HTTPS and the certificate](#https-and-the-certificate)
-- :material-view-dashboard: [The screen layout](#the-screen-layout)
-- :material-home: [Home](#home)
-- :material-plus-circle: [Create a cluster](#create-a-cluster)
-- :material-format-list-bulleted: [Clusters list](#clusters-list)
-- :material-database: [Inside a cluster](#inside-a-cluster)
-- :material-chart-line: [Monitoring and logging](#monitoring-and-logging)
-- :material-connection: [Connect your application](#connect-your-application)
-- :material-backup-restore: [Backup and restore](#backup-and-restore)
-- :material-code-braces: [SQL Editor](#sql-editor)
-- :material-database-cog: [Databases](#databases)
-- :material-eye: [Observability](#observability)
-- :material-magnify: [Discovery](#discovery)
-- :material-database-import: [Migration](#migration)
-- :material-account-group: [Users and access](#users-and-access)
-- :material-dots-horizontal-circle: [Other pages](#other-pages)
-- :material-update: [Upgrade the console](#upgrade-the-console)
-- :material-checkbox-marked-circle-outline: [Common tasks](#common-tasks)
-- :material-wrench: [Troubleshooting](#troubleshooting)
-- :material-alert: [Be careful](#be-careful)
+- 🧭 [How the console works](#how-the-console-works)
+- 📖 [Words you will see](#words-you-will-see)
+- 📦 [Install with Helm](#install-with-helm)
+- 🔑 [Sign in](#sign-in)
+- 🔒 [HTTPS and the certificate](#https-and-the-certificate)
+- 🖥️ [The screen layout](#the-screen-layout)
+- 🏠 [Home](#home)
+- ➕ [Create a cluster](#create-a-cluster)
+- 📋 [Clusters list](#clusters-list)
+- 🗄️ [Inside a cluster](#inside-a-cluster)
+- 📈 [Monitoring and logging](#monitoring-and-logging)
+- 🔌 [Connect your application](#connect-your-application)
+- 💾 [Backup and restore](#backup-and-restore)
+- 📝 [SQL Editor](#sql-editor)
+- 🛢️ [Databases](#databases)
+- 👁️ [Observability](#observability)
+- 🔍 [Discovery](#discovery)
+- 🚚 [Migration](#migration)
+- 👥 [Users and access](#users-and-access)
+- 📄 [Other pages](#other-pages)
+- ⬆️ [Upgrade the console](#upgrade-the-console)
+- ✅ [Common tasks](#common-tasks)
+- 🔧 [Troubleshooting](#troubleshooting)
+- ⚠️ [Be careful](#be-careful)
 
 </div>
-
----
 
 ## How the console works
 
