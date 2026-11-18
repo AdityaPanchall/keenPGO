@@ -38,27 +38,6 @@ This page explains every part of the console in simple words, with screenshots.
 
 ## How the console works
 
-```mermaid
-flowchart LR
-    A["You (browser)"] -- HTTPS --> B["KeenPG console"]
-    B --> C["Kubernetes"]
-    C --> D["KeenPG operator"]
-    D --> E[("your PostgreSQL clusters")]
-
-    classDef you fill:#e3f2fd,stroke:#1976d2,color:#0d3c6e
-    classDef kube fill:#ede7f6,stroke:#5e35b1,color:#311b92
-    classDef db fill:#e8f5e9,stroke:#2e7d32,color:#1b5e20
-    class A,B you
-    class C,D kube
-    class E db
-```
-
-## How the console works
-
-```
-You (browser) ──HTTPS──► KeenPG console ──► Kubernetes ──► KeenPG operator ──► your PostgreSQL clusters
-```
-
 1. **You** fill a form or press a button in the console.
 2. **The console** checks that you are allowed to do this. It then saves your request in Kubernetes as a `KeenPGCluster` object and writes an entry in the audit log.
 3. **The KeenPG operator**, a program running inside your Kubernetes, sees the request. It creates everything the database needs: pods, disks, network services, passwords, certificates and backup jobs.
