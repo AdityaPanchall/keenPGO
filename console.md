@@ -188,9 +188,13 @@ kubectl apply -k config/logging         # Loki, only if you want logs
 
 ## Sign in
 
-![Sign-in page](assets/console-login.png)
+<p align="center">
+  <img src="assets/console-login.png" alt="Sign-in page" width="700">
+  <br>
+  <em>Sign-in page</em>
+</p>
 
-1. Open the console address in your browser.  
+1. Open the console address in your browser.
 2. Type your **username** and **password**, then click **Sign In**.
 
 **The first password.** Helm makes a random password for the user `admin` and keeps it in the Secret `keenpgo-console-admin`. Read it with:
@@ -200,22 +204,33 @@ kubectl -n keenpg-operator get secret keenpgo-console-admin -o jsonpath='{.data.
 kubectl -n keenpg-operator get secret keenpgo-console-admin -o jsonpath='{.data.password}' | base64 -d; echo
 ```
 
-&nbsp;
-
-```
+```text
 admin
 x7Rk2pQw9LmZ4vTnB8sD   (yours is different)
 ```
 
 To choose the password yourself, add `--set console.admin.password='Choose-A-Password-1'` to `helm install`.
 
+> [!NOTE]
 > **The Secret is only read once**, when the console starts for the first time and there is no admin yet. After that, the password lives in the console's own database. If you change it in the console, the Secret no longer shows it.
 
+> [!WARNING]
 > **Change the admin password on day one.** Click your name (top right) → **Change password**.
 
 You stay signed in for 12 hours. To sign out, click your name → **Sign out**.
 
-**Forgot the admin password?** Remove the admin user from the console database and restart the console. It then creates `admin` again with the password from the Secret above. Other users, the audit log and settings are kept.
+<details>
+<summary><strong>Forgot the admin password?</strong></summary>
+
+<br>
+
+Remove the admin user from the console database and restart the console. It then creates `admin` again with the password from the Secret above. Other users, the audit log and settings are kept.
+
+```mermaid
+flowchart LR
+    A["Remove the admin user from the console database"] --> B["Restart the console"]
+    B --> C["Console creates admin again with the password from the Secret"]
+```
 
 ```sh
 kubectl -n keenpg-operator exec keenpgo-console-db-0 -- sh -c "PGPASSWORD=\"\$POSTGRES_PASSWORD\" \$(ls -d /usr/pgsql-*/bin | tail -1)/psql -h /tmp -U keenpgo -d keenpgo -c \"DELETE FROM console_users WHERE username = 'admin';\""
@@ -223,6 +238,8 @@ kubectl -n keenpg-operator rollout restart deploy/keenpgo-console
 ```
 
 `DELETE 1` means it worked.
+
+</details>
 
 **Other users** forgot their password? An admin resets it in **Settings → Users** (key icon).
 
