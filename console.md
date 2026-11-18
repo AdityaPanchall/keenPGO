@@ -1,3 +1,10 @@
+# KeenPG Console
+
+The **KeenPG console** is a web page for running PostgreSQL on Kubernetes and OpenShift. From your browser you can create databases, connect applications, take backups and restore them, run SQL on the primary or on a replica, and watch every database on Grafana dashboards. You never need to write YAML.
+
+This page explains every part of the console in simple words, with screenshots.
+
+---
 ## Contents
 
 <div class="grid cards" markdown>
