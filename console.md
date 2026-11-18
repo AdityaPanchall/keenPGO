@@ -6,32 +6,55 @@ This page explains every part of the console in simple words, with screenshots.
 
 ---
 
-## Contents
+???+ abstract "Contents"
 
-- [How the console works](#how-the-console-works)  
-- [Words you will see](#words-you-will-see)  
-- [Install with Helm](#install-with-helm)  
-- [Sign in](#sign-in)  
-- [HTTPS and the certificate](#https-and-the-certificate)  
-- [The screen layout](#the-screen-layout)  
-- [Home](#home)  
-- [Create a cluster](#create-a-cluster)  
-- [Clusters list](#clusters-list)  
-- [Inside a cluster](#inside-a-cluster)  
-- [Monitoring and logging](#monitoring-and-logging)  
-- [Connect your application](#connect-your-application)  
-- [Backup and restore](#backup-and-restore)  
-- [SQL Editor](#sql-editor)  
-- [Databases](#databases)  
-- [Observability](#observability)  
-- [Discovery](#discovery)  
-- [Migration](#migration)  
-- [Users and access](#users-and-access)  
-- [Other pages](#other-pages)  
-- [Upgrade the console](#upgrade-the-console)  
-- [Common tasks](#common-tasks)  
-- [Troubleshooting](#troubleshooting)  
-- [Be careful](#be-careful)
+    - [How the console works](#how-the-console-works)
+    - [Words you will see](#words-you-will-see)
+    - [Install with Helm](#install-with-helm)
+    - [Sign in](#sign-in)
+    - [HTTPS and the certificate](#https-and-the-certificate)
+    - [The screen layout](#the-screen-layout)
+    - [Home](#home)
+    - [Create a cluster](#create-a-cluster)
+    - [Clusters list](#clusters-list)
+    - [Inside a cluster](#inside-a-cluster)
+    - [Monitoring and logging](#monitoring-and-logging)
+    - [Connect your application](#connect-your-application)
+    - [Backup and restore](#backup-and-restore)
+    - [SQL Editor](#sql-editor)
+    - [Databases](#databases)
+    - [Observability](#observability)
+    - [Discovery](#discovery)
+    - [Migration](#migration)
+    - [Users and access](#users-and-access)
+    - [Other pages](#other-pages)
+    - [Upgrade the console](#upgrade-the-console)
+    - [Common tasks](#common-tasks)
+    - [Troubleshooting](#troubleshooting)
+    - [Be careful](#be-careful)
+
+---
+
+## How the console works
+
+```mermaid
+graph LR
+  A["You (browser)"] -->|HTTPS| B["KeenPG console"]
+  B --> C["Kubernetes"]
+  C --> D["KeenPG operator"]
+  D --> E["your PostgreSQL clusters"]
+```
+
+1. **You** fill a form or press a button in the console.
+2. **The console** checks that you are allowed to do this. It then saves your request in Kubernetes as a `KeenPGCluster` object and writes an entry in the audit log.
+3. **The KeenPG operator**, a program running inside your Kubernetes, sees the request. It creates everything the database needs: pods, disks, network services, passwords, certificates and backup jobs.
+4. **The operator keeps watching.** If a pod crashes, a disk is lost or someone deletes a service by mistake, the operator puts it back.
+
+Why this matters:
+
+- **The console and the command line always agree.** For clusters, backups and settings, the console only writes the same objects you could write with `kubectl`. Only the **SQL Editor** and **Databases** pages talk to PostgreSQL directly, like any SQL tool.
+- **Your databases don't depend on the console.** If the console stops, your databases keep running.
+- **Your databases don't depend on the operator either.** If the operator stops, they keep running and failover still works. Only new changes wait until it is back.
 
 ---
 
