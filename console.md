@@ -189,7 +189,7 @@ kubectl apply -k config/logging         # Loki, only if you want logs
 ## Sign in
 
 <p align="center">
-  <img src="Images_keen/console-login.png" alt="Sign-in page" width="700">
+  <img src="Images_keen/console-login.png" alt="Sign-in page" width="100%">
   <br>
   <em>Sign-in page</em>
 </p>
