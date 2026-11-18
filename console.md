@@ -118,11 +118,24 @@ flowchart LR
     Loki --> G
 ```
 
----
-
 ## Install with Helm
 
+> [!NOTE]
 > **Skip this part** if KeenPG is already installed for you.
+
+```mermaid
+flowchart LR
+    A["helm install"] --> B["Wait until all pods are Running"]
+    B --> C["Change the console service to NodePort"]
+    C --> D["Open the console in your browser"]
+    D --> E["Browser warns about the certificate: Advanced → Continue"]
+    E -.-> F["Optional: dashboards and logs"]
+
+    classDef step fill:#e3f2fd,stroke:#1976d2,color:#0d3c6e
+    classDef opt fill:#f3e5f5,stroke:#7b1fa2,color:#4a148c
+    class A,B,C,D,E step
+    class F opt
+```
 
 Run this from the folder that holds the chart. It installs everything: the operator, the console and the console's own database.
 
@@ -136,9 +149,7 @@ Wait until all pods are **Running**:
 kubectl -n keenpg-operator get pods
 ```
 
-&nbsp;
-
-```
+```text
 NAME                                READY   STATUS    RESTARTS   AGE
 keenpgo-7b8d8dcc4f-tjnht            1/1     Running   0          2m
 keenpgo-console-6797b94dc-rdl5j     1/1     Running   0          2m
@@ -154,16 +165,15 @@ kubectl -n keenpg-operator patch svc keenpgo-console -p '{"spec":{"type":"NodePo
 kubectl -n keenpg-operator get svc keenpgo-console
 ```
 
-&nbsp;
-
-```
+```text
 NAME              TYPE       CLUSTER-IP     EXTERNAL-IP   PORT(S)                      AGE
 keenpgo-console   NodePort   10.96.120.15   <none>        80:31847/TCP,443:30512/TCP   5m
 ```
 
 Open **`https://<node IP>:<node port>`**, for example `https://192.168.49.2:30512`. (On minikube, `minikube ip` gives the node IP.)
 
-The first time, the browser warns that the certificate is not trusted. That is expected: the console made its own certificate. Click **Advanced → Continue**, or see [HTTPS and the certificate](#https-and-the-certificate).
+> [!WARNING]
+> The first time, the browser warns that the certificate is not trusted. That is expected: the console made its own certificate. Click **Advanced → Continue**, or see [HTTPS and the certificate](#https-and-the-certificate).
 
 ### Optional: dashboards and logs
 
